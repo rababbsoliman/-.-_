@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>لعبة تحليل العبارات الجبرية</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    font-family: "Cairo", Arial, sans-serif;
+    background: linear-gradient(#e0f7fa,#fff);
+    text-align: center;
+    direction: rtl;
+    margin:0;
+}
+.container{
+    max-width: 800px;
+    margin:auto;
+    padding:20px;
+}
+h1{
+    color:#00695c;
+}
+.summary{
+    background:#ffffff;
+    border-radius:15px;
+    padding:15px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+    margin-bottom:20px;
+}
+.question-box{
+    background:#ffffff;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 0 15px rgba(0,0,0,0.15);
+}
+.lesson{
+    font-size:18px;
+    color:#00796b;
+    margin-bottom:10px;
+}
+.question{
+    font-size:22px;
+    margin:15px 0;
+}
+.options button{
+    display:block;
+    width:100%;
+    padding:15px;
+    margin:10px 0;
+    font-size:18px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    background:#e0f2f1;
+    transition:0.3s;
+}
+.options button:hover{
+    background:#b2dfdb;
+}
+.correct{
+    background:#81c784 !important;
+    color:#fff;
+}
+.wrong{
+    background:#e57373 !important;
+    color:#fff;
+}
+.feedback{
+    margin-top:15px;
+    font-size:18px;
+    color:#444;
+}
+.stars{
+    font-size:30px;
+    color:gold;
+    animation: sparkle 1s ease-in-out infinite alternate;
+}
+@keyframes sparkle{
+    from{opacity:0.5;}
+    to{opacity:1;}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🎮 لعبة تحليل العبارات الجبرية</h1>
+
+<div class="summary">
+<h3>📘 ملخص أهم المفاهيم</h3>
+<ul style="text-align:right;font-size:18px;">
+<li>العامل المشترك الأكبر هو أكبر عدد أو متغير يشترك في الحدود.</li>
+<li>تحليل العبارة الجبرية يتم بإخراج العامل المشترك.</li>
+<li>النماذج المساحية تساعد على فهم التحليل بصريًا.</li>
+<li>يمكن التحقق من صحة التحليل بإعادة الضرب.</li>
+</ul>
+</div>
+
+<div class="question-box">
+<div class="lesson" id="lesson"></div>
+<div class="question" id="question"></div>
+<div class="options" id="options"></div>
+<div class="feedback" id="feedback"></div>
+</div>
+
+</div>
+
+<script>
+const questions = [
+{
+lesson:"العامل المشترك الأكبر",
+q:"ما العامل المشترك الأكبر للعددين 24 و 48؟",
+options:["6","12","24","48"],
+answer:2,
+concept:"نحلل العددين ونأخذ أكبر عامل مشترك."
+},
+{
+lesson:"العامل المشترك الأكبر",
+q:"ما العامل المشترك الأكبر للحدين 36k و 144km ؟",
+options:["36","36k","72k","144k"],
+answer:1,
+concept:"العامل المشترك يشمل العدد والمتغير المشترك k."
+},
+{
+lesson:"تحليل العبارات الجبرية",
+q:"حلل العبارة: 3x + 6",
+options:["3(x + 6)","6(x + 1)","3(x + 2)","x(3 + 6)"],
+answer:2,
+concept:"العامل المشترك هو 3."
+},
+{
+lesson:"تحليل العبارات الجبرية",
+q:"أي العبارات التالية غير قابلة للتحليل؟",
+options:["3x + 6","12x + 30y","2x − 15","9x + 18"],
+answer:2,
+concept:"لا يوجد عامل مشترك بين الحدين."
+},
+{
+lesson:"النماذج المساحية",
+q:"نموذج مساحي فيه 5x و 20 يمثل أي تحليل؟",
+options:["5(x + 20)","x(5 + 20)","5(x + 4)","25x"],
+answer:2,
+concept:"العامل المشترك 5."
+},
+{
+lesson:"المساحة",
+q:"إذا كانت مساحة مستطيل = 4x − 8، فما التحليل الصحيح؟",
+options:["4(x − 2)","2(2x − 4)","8(x − 1)","x(4 − 8)"],
+answer:0,
+concept:"نخرج العامل المشترك 4."
+},
+{
+lesson:"تحليل العبارات الجبرية",
+q:"حلل: 9x + 18",
+options:["9(x + 2)","3(x + 6)","x(9 + 18)","18(x + 1)"],
+answer:0,
+concept:"العامل المشترك الأكبر هو 9."
+},
+{
+lesson:"البحث عن الخطأ",
+q:"أي تحليل صحيح للعبارة 90x − 15 ؟",
+options:["15(6x)","15(6x − 1)","5(18x − 3)","90(x − 15)"],
+answer:1,
+concept:"نقسم كل حد على 15."
+},
+{
+lesson:"النماذج المساحية",
+q:"النموذج الذي يحتوي 36 و 20x و 40 العامل المشترك له هو:",
+options:["2","4","5","10"],
+answer:1,
+concept:"جميع الأعداد تقبل القسمة على 4."
+},
+{
+lesson:"مفهوم عام",
+q:"لماذا نستخدم التحليل؟",
+options:[
+"لتكبير الأعداد",
+"لتسهيل الحل وفهم العبارة",
+"لزيادة عدد الحدود",
+"لإلغاء المتغيرات"
+],
+answer:1,
+concept:"التحليل يسهل الحل والفهم."
+}
+];
+
+let current=0;
+
+function speak(text){
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang="ar";
+    speechSynthesis.speak(msg);
+}
+
+function loadQuestion(){
+    document.getElementById("feedback").innerHTML="";
+    const q=questions[current];
+    document.getElementById("lesson").innerHTML="📌 "+q.lesson;
+    document.getElementById("question").innerHTML=q.q;
+    const optionsDiv=document.getElementById("options");
+    optionsDiv.innerHTML="";
+    q.options.forEach((opt,i)=>{
+        const btn=document.createElement("button");
+        btn.innerHTML=opt;
+        btn.onclick=()=>checkAnswer(btn,i);
+        optionsDiv.appendChild(btn);
+    });
+}
+
+function checkAnswer(btn,i){
+    const q=questions[current];
+    if(i===q.answer){
+        btn.classList.add("correct");
+        document.getElementById("feedback").innerHTML=
+        "⭐ أحسنت يا صديقي! أنت رائع ⭐<br><small>"+q.concept+"</small>";
+        speak("أحسنت يا صديقي أنت رائع");
+        setTimeout(()=>{
+            current++;
+            if(current<questions.length){
+                loadQuestion();
+            }else{
+                document.querySelector(".question-box").innerHTML=
+                "<h2>🎉 انتهى الاختبار</h2><p>عمل رائع 👏</p>";
+            }
+        },2000);
+    }else{
+        btn.classList.add("wrong");
+        speak("لا بأس حاول مرة أخرى");
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
